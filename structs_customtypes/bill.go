@@ -9,11 +9,16 @@ type bill struct {
 }
 
 // make new bills
-func newBill(name string, items map[string]float64) bill {
+func newBill(name string, items ...map[string]float64) bill {
 	b := bill{
-		name:  name,
-		items: items,
-		tip:   0,
+		name: name,
+		items: func() map[string]float64 {
+			if len(items) > 0 {
+				return items[0]
+			}
+			return make(map[string]float64)
+		}(),
+		tip: 0,
 	}
 
 	return b
@@ -26,11 +31,24 @@ func (b bill) formatBill() string {
 
 	//list items
 	for k, v := range b.items {
-		fs += fmt.Sprintf("%10v: ...$%10v \n", k+": ", v)
+		fs += fmt.Sprintf("%10v: ...%v$ \n", k+": ", v)
 		total += v
 	}
+
+	//add tip
+	fs += fmt.Sprintf("The %-25v ...$%v \n", "tip: ", b.tip)
 
 	//total
 	fs += fmt.Sprintf("The %-25v ...$%0.2f", "total: ", total)
 	return fs
+}
+
+//update tip
+func (b *bill) updateTip(tip float64) {
+	b.tip = tip
+}
+
+//add an item to the bill
+func (b *bill) addItems(name string, price float64) {
+	b.items[name] = price
 }
