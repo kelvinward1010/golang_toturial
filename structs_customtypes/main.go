@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -32,17 +33,40 @@ func createBill() bill {
 func promtOptions(b bill) {
 	reader := bufio.NewReader(os.Stdin)
 
-	opt, _ := getInput("Choose options (a - add item, s - save bill, t - add tip, x: exit): ", reader)
+	opt, _ := getInput("Choose options (a - add item,  t - add tip, s - save bill, x: exit): ", reader)
 	switch opt {
 	case "a":
 		name, _ := getInput("Item name: ", reader)
 		price, _ := getInput("Item price: ", reader)
-		fmt.Printf("You chose to add %v with price is %v:", name, price)
-	case "s":
-		fmt.Println("You chose to save the bill:", b.name)
+
+		p, err := strconv.ParseFloat(price, 64)
+
+		if err != nil {
+			fmt.Println("The price must be a number")
+			promtOptions(b)
+		}
+
+		b.addItems(name, p)
+
+		fmt.Printf("You chose to add %v with price is %v:", name, p)
+		promtOptions(b)
 	case "t":
 		tip, _ := getInput("Tip amount: ", reader)
+
+		t, err := strconv.ParseFloat(tip, 64)
+
+		if err != nil {
+			fmt.Println("The tip must be a number")
+			promtOptions(b)
+		}
+
+		b.updateTip(t)
+
 		fmt.Println("You chose to add a tip:", tip)
+		promtOptions(b)
+	case "s":
+		b.saveBill()
+		fmt.Println("You chose to save the bill:", b.name)
 	case "x":
 		fmt.Println("Exited")
 	default:

@@ -1,0 +1,7 @@
+Bill breakdown: 
+  coffee: : ...3.99$ 
+    cake: : ...5.99$ 
+Iphone X: : ...555.5$ 
+       g: : ...5$ 
+The tip:                      ...$10 
+The total:                    ...$570.48
